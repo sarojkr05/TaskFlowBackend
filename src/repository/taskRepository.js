@@ -13,7 +13,8 @@ const taskRepository = {
 
 export const updateTask = async (taskId, updatedData) => {
   try {
-    const task = await Task.findByIdAndUpdate(taskId, updatedData, { new: true });
+    const task = await Task.findByIdAndUpdate(taskId, updatedData, { new: true, runValidators: true });
+    console.log("task from repo", task)
     return task;
   } catch (error) {
     throw new Error("Error updating task");

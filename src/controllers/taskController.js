@@ -37,7 +37,7 @@ export const getTaskById = async (req, res) => {
 
 export const updateTaskController = async (req, res) => {
   try {
-    const taskId = req.params.id;
+    const taskId = req.params.taskId;
     const userId = req.user.id; // Extracted from authentication middleware
     const userRole = req.user.role;
     const updatedData = req.body;

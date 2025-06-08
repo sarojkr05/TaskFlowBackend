@@ -7,8 +7,6 @@ dotenv.config();
 // Middleware to authenticate user using JWT
 export const authenticate = async (req, res, next) => {
 
-  console.log("Incoming request to authenticate user", req.method, req.path);
-
   try {
     const token = req.cookies.token;
 

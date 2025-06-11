@@ -6,9 +6,9 @@ import InternalServerError from "../utils/internalSeverError.js"
 
 export async function createTaskInProjectController(req, res) {
   try {
-    const { title, description, projectId, assignedTo } = req.body;
+    const { title, description, assignedTo } = req.body;
+    const { projectId } = req.params;
     const userId = req.user._id;
-    console.log("User ID Type:", typeof userId, " Value:", userId);
 
     const task = await createTaskInProjectService(userId, title, description, projectId, assignedTo);
     res.status(201).json({

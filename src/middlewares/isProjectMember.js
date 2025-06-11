@@ -5,6 +5,12 @@ export const isProjectMember = async (req, res, next) => {
     const projectId = req.params.projectId || req.body.projectId;
     const userId = req.user.id;
 
+    if (!req.params.projectId) {
+      return res
+        .status(400)
+        .json({ message: "Project ID is missing in request" });
+    }
+
     if (!projectId) {
       return res.status(400).json({
         success: false,
@@ -22,8 +28,12 @@ export const isProjectMember = async (req, res, next) => {
     }
 
     const isCreator = project.createdBy.toString() === userId;
-    const isAdmin = project.admins.some((adminId) => adminId.toString() === userId);
-    const isMember = project.members.some((memberId) => memberId.toString() === userId);
+    const isAdmin = project.admins.some(
+      (adminId) => adminId.toString() === userId
+    );
+    const isMember = project.members.some(
+      (memberId) => memberId.toString() === userId
+    );
 
     if (!isCreator && !isAdmin && !isMember) {
       return res.status(403).json({

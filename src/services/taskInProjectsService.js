@@ -1,4 +1,3 @@
-import { getProjectById } from "../repository/projectRepository.js";
 import mongoose from "mongoose";
 import {
   createTaskInProject,
@@ -10,6 +9,8 @@ import {
 import BadRequestError from "../utils/badRequestError.js";
 import NotFoundError from "../utils/notFoundError.js";
 import InternalServerError from "../utils/internalSeverError.js";
+import Project from "../schemas/projectSchema.js";
+
 export async function createTaskInProjectService(
   userId,
   title,
@@ -17,18 +18,13 @@ export async function createTaskInProjectService(
   projectId,
   assignedTo
 ) {
-  const project = await getProjectById(projectId);
+  const project = await Project.findById(projectId);
   console.log("User ID:", userId);
   console.log("Project Members:", project.members);
   console.log("Project Data:", project);
   if (!project) {
     throw new Error("Project not found");
   }
-  //   if (project.members.some(m => m.toString() === project)) {
-  //     console.log("✅ User is a member!");
-  // } else {
-  //     console.log("❌ User not found in members!");
-  // }
   if (project.members.some((m) => m.toString() === userId.toString())) {
     console.log("✅ User is a member!");
   } else {

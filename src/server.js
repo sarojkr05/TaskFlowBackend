@@ -26,7 +26,7 @@ app.use("/users", userRouter);
 app.use("/auth", router);
 app.use("/tasks", taskRouter);
 app.use("/projects", projectRouter);
-app.use("/task-within-project", tasksInProjectsRouter);
+app.use("/projects", tasksInProjectsRouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`);

@@ -72,3 +72,30 @@ export async function removeUserFromProjectService(adminId, projectId, userId) {
 
   return await projectRepository.removeUserFromProject(projectId, userId);
 }
+
+export async function getAllProjectsService(userId) {
+  try {
+    return await projectRepository.getAllProjects(userId);
+  } catch (error) {
+    console.error("Error getting all projects:", error);
+    throw new Error("Failed to fetch projects");
+  }
+}
+
+export async function updateProjectService(projectId, updateData) {
+  try {
+    return await projectRepository.updateProject(projectId, updateData);
+  } catch (error) {
+    console.error("Error updating project:", error);
+    throw new Error("Failed to update project");
+  }
+}
+
+export async function deleteProjectService(projectId) {
+  try {
+    return await projectRepository.deleteProject(projectId);
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    throw new Error("Failed to delete project");
+  }
+}

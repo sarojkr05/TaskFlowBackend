@@ -30,3 +30,29 @@ export async function removeUserFromProject(projectId, userId) {
       { new: true }
   );
 }
+
+export async function getAllProjects(userId) {
+  try {
+    return await Project.find({
+      $or: [{ createdBy: userId }, { members: userId }]
+    })
+  } catch (error) {
+    console.log("Error fetching all the projects")
+  }
+}
+
+export async function updateProject(projectId, updateData) {
+  try {
+    return await Project.findByIdAndUpdate(projectId, updateData, { new: true });
+  } catch (error) {
+    console.log("Error updating the project")
+  }
+}
+
+export async function deleteProject(projectId) {
+  try {
+    return await Project.findByIdAndDelete(projectId);
+  } catch (error) {
+    console.log("Error deleting the project")
+  }
+}

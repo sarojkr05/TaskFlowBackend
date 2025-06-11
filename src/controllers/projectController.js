@@ -1,4 +1,4 @@
-import { addUserToProjectService, createProjectService, getProjectByIdService, removeUserFromProjectService } from "../services/projectService.js";
+import { addUserToProjectService, createProjectService, deleteProjectService, getAllProjectsService, getProjectByIdService, removeUserFromProjectService, updateProjectService } from "../services/projectService.js";
 
 export async function createProjectController(req, res) {
     try {
@@ -76,4 +76,35 @@ export async function removeUserFromProjectController(req, res) {
         console.error("Error in removeUserFromProjectController:", error);
         res.status(error.statusCode || 500).json({ success: false, message: error.reason || "Internal Server Error" });
     }
+}
+
+export async function getAllProjectsController(req, res) {
+  try {
+    const userId = req.user.id;
+    const projects = await getAllProjectsService(userId);
+    res.status(200).json({ success: true, projects });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+export async function updateProjectController(req, res) {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const updated = await updateProjectService(id, updateData);
+    res.status(200).json({ success: true, message: "Project updated", project: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+export async function deleteProjectController(req, res) {
+  try {
+    const { id } = req.params;
+    await deleteProjectService(id);
+    res.status(200).json({ success: true, message: "Project deleted" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 }

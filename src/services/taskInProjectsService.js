@@ -55,9 +55,9 @@ export async function updateTaskInProjectService(taskId, taskData) {
 }
 
 
-export async function getAllTasksInProjectService() {
+export async function getAllTasksInProjectService(projectId) {
   try {
-    const tasks = await getAlltasksInProject();
+    const tasks = await getAlltasksInProject(projectId);
     return tasks;
   } catch (error) {
     console.error("Error in Service Layer - Fetching Tasks:", error);

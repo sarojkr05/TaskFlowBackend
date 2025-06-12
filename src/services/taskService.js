@@ -17,9 +17,9 @@ async function createTask(taskDetails, userId) {
 }
 
 const taskService = {
-  getAllTasks: async () => {
+  getAllTasks: async (userId) => {
     try {
-      const tasks = await taskRepository.getAllTasksRepo();
+      const tasks = await taskRepository.getTasksByUserId(userId);
       return tasks;
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -27,10 +27,13 @@ const taskService = {
     }
   },
 
-  getTaskById: async (taskId) => {
+  getTaskById: async (taskId, userId, userRole) => {
     try {
       const task = await taskRepository.getTaskById(taskId);
       if (!task) throw new Error("Task not found");
+      if (task.createdBy.toString() !== userId && userRole !== "admin") {
+    throw new Error("Unauthorized access");
+  }
       return task;
     } catch (error) {
       console.error("Error fetching task by ID:", error);

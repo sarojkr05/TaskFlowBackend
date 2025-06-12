@@ -2,8 +2,8 @@
 import Task from "../schemas/taskSchema.js";
 
 const taskRepository = {
-  getAllTasksRepo: async () => {
-    return await Task.find().populate("assignedTo", "name email");
+  getTasksByUserId: async (userId) => {
+    return await Task.find({ createdBy: userId }).populate("assignedTo", "name email");
   },
 
   getTaskById: async (taskId) => {

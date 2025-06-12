@@ -25,9 +25,9 @@ export async function updateTaskInProject(taskId, taskData) {
 }
 
 
-export async function getAlltasksInProject() {
+export async function getAlltasksInProject(projectId) {
   try {
-    return await tasksInProjectSchema.find();
+    return await tasksInProjectSchema.find({ projectId });
   } catch (error) {
     console.error("Database Error - Fetching All Tasks:", error);
     throw new InternalServerError("Database error while retrieving tasks.");

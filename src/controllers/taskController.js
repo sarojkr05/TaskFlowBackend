@@ -19,7 +19,7 @@ async function createTaskController(req, res) {
 
 export const getAllTasks = async (req, res) => {
   try {
-    const tasks = await taskService.getAllTasks();
+    const tasks = await taskService.getAllTasks(req.user.id);
     res.status(200).json({ success: true, tasks });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -28,7 +28,7 @@ export const getAllTasks = async (req, res) => {
 
 export const getTaskById = async (req, res) => {
   try {
-    const task = await taskService.getTaskById(req.params.id);
+    const task = await taskService.getTaskById(req.params.id, req.user.id, req.user.role);
     res.status(200).json({ success: true, task });
   } catch (error) {
     res.status(404).json({ success: false, message: error.message });

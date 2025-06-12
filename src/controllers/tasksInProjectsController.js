@@ -27,11 +27,11 @@ export async function createTaskInProjectController(req, res) {
 export async function updateTaskInProjectController(req, res) {
   try {
 
-    const { taskId } = req.params;
+    const { taskId, projectId } = req.params;
     const taskData = req.body;
     
-    if (!taskId || !taskData) {
-      throw new BadRequestError(["Missing required fields: taskId or taskData"]);
+    if (!taskId || !projectId || !taskData) {
+      throw new BadRequestError(["Missing required fields: taskId, projectId or taskData"]);
     }
 
     const updatedTask = await updateTaskInProjectService(taskId, taskData);
@@ -52,10 +52,11 @@ export async function updateTaskInProjectController(req, res) {
 
 export async function getAllTasksInProjectController(req, res) {
   try {
-    const tasks = await getAllTasksInProjectService();
+    const { projectId } = req.params;
+    const tasks = await getAllTasksInProjectService(projectId);
     res.status(200).json({ success: true, tasks });
   } catch (error) {
-    console.error("❌ Error fetching all tasks:", error);
+    console.error("Error fetching all tasks:", error);
 
     // If it's already a known AppError type, forward as is, else wrap it as InternalServerError
     const errResponse = error.statusCode
@@ -102,14 +103,14 @@ export async function deleteTaskInProjectController(req, res) {
   try {
 
     const { taskId, projectId } = req.params;
-    if (!taskId) {
-      throw new BadRequestError(["Task Id is required"]);
+    if (!taskId || !projectId) {
+      throw new BadRequestError(["TaskId and ProjectId is required"]);
     }
 
     const deletedTask = await deleteTaskInProjectService(taskId, projectId);
 
     if(!deletedTask) {
-      throw new NotFoundError("Task not found!")
+      throw new NotFoundError("Task or project not found!")
     }
 
     res.status(200).json({

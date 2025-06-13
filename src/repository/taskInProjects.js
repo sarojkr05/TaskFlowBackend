@@ -15,7 +15,6 @@ export async function updateTaskInProject(taskId, taskData) {
     { new: true, runValidators: true }
   );
 
-  console.log("Updated task from repo: ", updatedTask);
 
   if (!updatedTask) {
     throw new BadRequestError(["Task not found or update failed"]);

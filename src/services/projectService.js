@@ -3,16 +3,15 @@ import {
   getProjectById,
 } from "../repository/projectRepository.js";
 import * as projectRepository from "../repository/projectRepository.js";
+import { findUserByEmail } from "../repository/userRepository.js";
 import BadRequestError from "../utils/badRequestError.js";
 import InternalServerError from "../utils/internalSeverError.js";
 
-
 export async function createProjectService(userId, name, description) {
   try {
-
-    // Ensure required fields are provide 
-    if(!userId || !name || !description) {
-      throw new BadRequestError(["UserId, Name and Description are required"])
+    // Ensure required fields are provide
+    if (!userId || !name || !description) {
+      throw new BadRequestError(["UserId, Name and Description are required"]);
     }
 
     const project = await createProject({
@@ -29,7 +28,9 @@ export async function createProjectService(userId, name, description) {
     if (error.name === "ValidationError") {
       throw new BadRequestError(["Invalid project data"]);
     }
-    throw new InternalServerError("Something went wrong while creating the project.")
+    throw new InternalServerError(
+      "Something went wrong while creating the project."
+    );
   }
 }
 
@@ -45,12 +46,24 @@ export async function getProjectByIdService(projectId) {
   }
 }
 
-export async function addUserToProjectService(projectId, userId) {
-  const project = await projectRepository.getProjectById(projectId);
-  if (!project) throw { reason: "Project not found", statusCode: 404 };
+export const addMemberToProjectService = async (projectId, email) => {
+  const user = await findUserByEmail(email);
+  if (!user) throw new Error("User not found");
 
-  return await projectRepository.addUserToProject(projectId, userId);
-}
+  const project = await projectRepository.findProjectById(projectId);
+  if (!project) throw new Error("Project not found");
+
+  if (project.members.includes(user._id))
+    throw new Error("User already a member");
+
+  project.members.push(user._id);
+  return await project.save();
+};
+
+export const getProjectMembersService = async (projectId) => {
+  const project = await projectRepository.findProjectById(projectId, true); // with populate
+  return project.members;
+};
 
 export async function removeUserFromProjectService(adminId, projectId, userId) {
   const project = await projectRepository.getProjectById(projectId);
@@ -60,14 +73,16 @@ export async function removeUserFromProjectService(adminId, projectId, userId) {
     throw { reason: "Not authorized to remove users", statusCode: 403 };
   }
 
-  // Extract _id from members (since members are populated)
-  const memberIds = project.members.map(member => member._id.toString());
-
-  console.log("Project member IDs:", memberIds);
-  console.log("User ID to remove:", userId);
-
+  const memberIds = project.members.map((member) =>
+    typeof member === "object" ? member._id.toString() : member.toString()
+  );
   if (!memberIds.includes(userId)) {
     throw { reason: "User is not a member of this project", statusCode: 400 };
+  }
+
+  // Optional: Prevent removing the project owner
+  if (userId === adminId) {
+    throw { reason: "Project owner cannot remove themselves", statusCode: 400 };
   }
 
   return await projectRepository.removeUserFromProject(projectId, userId);

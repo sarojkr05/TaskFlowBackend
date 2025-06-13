@@ -73,7 +73,6 @@ export async function getAllTasksInProjectController(req, res) {
 export async function getTaskByIdInProjectController(req, res) {
   try {
     const { taskId, projectId } = req.params;
-    console.log("Task ID and ProjectId Received:", taskId, projectId);
 
     if(!taskId || !projectId) {
       throw new BadRequestError(["Taks Id is required and Project Id is required"]);

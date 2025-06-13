@@ -15,19 +15,21 @@ export async function getProjectById(id) {
     .populate("members", "name email"); // ✅ Populate members (if needed)
 }
 
-export async function addUserToProject(projectId, userId) {
-  return await Project.findByIdAndUpdate(
-      projectId,
-      { $addToSet: { members: userId } }, // Prevents duplicate entries
-      { new: true }
-  );
-}
+export const findProjectById = (id, populate = false) => {
+  if (populate) return Project.findById(id).populate('members', 'email');
+  return Project.findById(id);
+};
+
+export const updateProjectMembers = (id, members) => {
+  return Project.findByIdAndUpdate(id, { members }, { new: true });
+};
+
 
 export async function removeUserFromProject(projectId, userId) {
   return await Project.findByIdAndUpdate(
-      projectId,
-      { $pull: { members: userId } }, // Removes the user from the member array
-      { new: true }
+    projectId,
+    { $pull: { members: userId } },
+    { new: true }
   );
 }
 

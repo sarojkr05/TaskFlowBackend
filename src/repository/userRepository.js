@@ -11,6 +11,10 @@ async function findUser(parameters) {
     }
 }
 
+async function findUserByEmail(email) {
+    return await User.findOne({ email })
+}
+
 async function createUser(userDetails) {
     try {
         return await User.create(userDetails);
@@ -23,4 +27,4 @@ async function createUser(userDetails) {
     }
 }
 
-export { findUser, createUser };
+export { findUser, findUserByEmail, createUser };

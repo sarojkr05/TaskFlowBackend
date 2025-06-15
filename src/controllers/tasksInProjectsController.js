@@ -10,7 +10,7 @@ export async function createTaskInProjectController(req, res) {
     const { projectId } = req.params;
     const userId = req.user._id;
 
-    const task = await createTaskInProjectService(userId, title, description, projectId, assignedTo);
+    const task = await createTaskInProjectService(userId, title, description, projectId, assignedTo || null);
     res.status(201).json({
       success: true,
       message: "Task created successfully",
@@ -53,7 +53,7 @@ export async function updateTaskInProjectController(req, res) {
 export async function getAllTasksInProjectController(req, res) {
   try {
     const { projectId } = req.params;
-    const tasks = await getAllTasksInProjectService(projectId);
+    const tasks = await getAllTasksInProjectService(projectId)
     res.status(200).json({ success: true, tasks });
   } catch (error) {
     console.error("Error fetching all tasks:", error);

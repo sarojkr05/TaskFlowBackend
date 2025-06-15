@@ -43,15 +43,15 @@ export const addMemberToProjectController = async (req, res) => {
 
 export const getProjectMembersController = async (req, res) => {
   const { projectId } = req.params;
+  const userId = req.user?.id;
 
   try {
-    const members = await getProjectMembersService(projectId);
+    const members = await getProjectMembersService(projectId, userId);
     res.status(200).json({ success: true, members });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(403).json({ success: false, message: error.message });
   }
 };
-
 export async function removeUserFromProjectController(req, res) {
   try {
     const { id: projectId, userId } = req.params; // projectId from URL param

@@ -16,7 +16,7 @@ export async function getProjectById(id) {
 }
 
 export const findProjectById = (id, populate = false) => {
-  if (populate) return Project.findById(id).populate('members', 'email');
+  if (populate) return Project.findById(id).populate('members', 'email name');
   return Project.findById(id);
 };
 
@@ -38,6 +38,7 @@ export async function getAllProjects(userId) {
     return await Project.find({
       $or: [{ createdBy: userId }, { members: userId }]
     })
+    .populate("members", "name email")
   } catch (error) {
     console.log("Error fetching all the projects")
   }

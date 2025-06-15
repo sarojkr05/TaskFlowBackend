@@ -60,8 +60,22 @@ export const addMemberToProjectService = async (projectId, email) => {
   return await project.save();
 };
 
-export const getProjectMembersService = async (projectId) => {
-  const project = await projectRepository.findProjectById(projectId, true); // with populate
+export const getProjectMembersService = async (projectId, userId) => {
+  const project = await projectRepository.findProjectById(projectId, true); // populated
+
+  if (!project) {
+    throw new Error("Project not found");
+  }
+
+  const isCreator = project.createdBy.toString() === userId.toString();
+  const isMember = project.members.some(
+    (member) => member._id.toString() === userId.toString()
+  );
+
+  if (!isCreator && !isMember) {
+    throw new Error("You are not authorized to view this project's members");
+  }
+
   return project.members;
 };
 

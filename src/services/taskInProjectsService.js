@@ -16,12 +16,11 @@ export async function createTaskInProjectService(
   title,
   description,
   projectId,
-  assignedTo
+  assignedTo,
+  status,
+  priority
 ) {
   const project = await Project.findById(projectId);
-  console.log("User ID:", userId);
-  console.log("Project Members:", project.members);
-  console.log("Project Data:", project);
   if (!project) {
     throw new Error("Project not found");
   }
@@ -33,6 +32,8 @@ export async function createTaskInProjectService(
   return await createTaskInProject({
     title,
     description,
+    status,
+    priority,
     projectId,
     assignedTo: assignedTo || null,
     createdBy: userId,

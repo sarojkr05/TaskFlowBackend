@@ -8,6 +8,11 @@ const TaskInProjectSchema = new mongoose.Schema({
     enum: ["pending", "in-progress", "completed"],
     default: "pending",
   },
+  priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
   projectId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Project",

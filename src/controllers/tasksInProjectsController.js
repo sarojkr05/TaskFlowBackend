@@ -6,11 +6,11 @@ import InternalServerError from "../utils/internalSeverError.js"
 
 export async function createTaskInProjectController(req, res) {
   try {
-    const { title, description, assignedTo } = req.body;
+    const { title, description, assignedTo, status, priority } = req.body;
     const { projectId } = req.params;
     const userId = req.user._id;
 
-    const task = await createTaskInProjectService(userId, title, description, projectId, assignedTo || null);
+    const task = await createTaskInProjectService(userId, title, description, projectId, assignedTo, status, priority || null);
     res.status(201).json({
       success: true,
       message: "Task created successfully",

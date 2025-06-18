@@ -57,7 +57,8 @@ export const addMemberToProjectService = async (projectId, email) => {
     throw new Error("User already a member");
 
   project.members.push(user._id);
-  return await project.save();
+   const savedProjct = await project.save();
+   return { updatedProject: savedProjct, user };
 };
 
 export const getProjectMembersService = async (projectId, userId) => {

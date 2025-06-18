@@ -1,32 +1,43 @@
-import { addMemberToProjectService, createProjectService, deleteProjectService, getAllProjectsService, getProjectByIdService, getProjectMembersService, removeUserFromProjectService, updateProjectService } from "../services/projectService.js";
+import { io, onlineUsers } from "../server.js";
+import Notification from "../schemas/notificationSchema.js";
+import {
+  addMemberToProjectService,
+  createProjectService,
+  deleteProjectService,
+  getAllProjectsService,
+  getProjectByIdService,
+  getProjectMembersService,
+  removeUserFromProjectService,
+  updateProjectService,
+} from "../services/projectService.js";
 
 export async function createProjectController(req, res) {
-    try {
-        const { name, description } = req.body;
-        const userId = req.user.id; // Extracted from authentication middleware
-        const userRole = req.user.role;
-        const project = await createProjectService(userId, name, description);
+  try {
+    const { name, description } = req.body;
+    const userId = req.user.id; // Extracted from authentication middleware
+    const userRole = req.user.role;
+    const project = await createProjectService(userId, name, description);
 
-        res.status(201).json({
-            success: true,
-            message: "Project created successfully",
-            project,
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-    }
+    res.status(201).json({
+      success: true,
+      message: "Project created successfully",
+      project,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 }
 
 export const getProjectByIdController = async (req, res) => {
-    try {
-        const project = await getProjectByIdService(req.params.id);
-        res.status(200).json({ success: true, project });
-    } catch (error) {
-        res.status(404).json({ success: false, message: error.message });
-    }
+  try {
+    const project = await getProjectByIdService(req.params.id);
+    res.status(200).json({ success: true, project });
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
 };
 
 export const addMemberToProjectController = async (req, res) => {
@@ -34,12 +45,28 @@ export const addMemberToProjectController = async (req, res) => {
   const { email } = req.body;
 
   try {
-    const updatedProject = await addMemberToProjectService(projectId, email);
+    const { updatedProject, user } = await addMemberToProjectService(projectId, email);
+    // save notification to DB
+    const notification = await Notification.create({
+      user: user._id,
+      message: `You were added to project: ${updatedProject.name}`,
+      project: updatedProject._id
+    });
+
+    const socketId = onlineUsers.get(user._id.toString());
+    if (socketId) {
+      io.to(socketId).emit("projectAdded", {
+        message: notification.message,
+        projectId: updatedProject._id,
+      });
+    }
+
     res.status(200).json({ success: true, project: updatedProject });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
 
 export const getProjectMembersController = async (req, res) => {
   const { projectId } = req.params;
@@ -57,7 +84,11 @@ export async function removeUserFromProjectController(req, res) {
     const { id: projectId, userId } = req.params; // projectId from URL param
     const adminId = req.user.id; // from auth middleware
 
-    const updatedProject = await removeUserFromProjectService(adminId, projectId, userId);
+    const updatedProject = await removeUserFromProjectService(
+      adminId,
+      projectId,
+      userId
+    );
 
     res.status(200).json({
       success: true,
@@ -65,14 +96,13 @@ export async function removeUserFromProjectController(req, res) {
       project: updatedProject,
     });
   } catch (error) {
-    console.error("❌ Error in removeUserFromProjectController:", error);
+    console.error("Error in removeUserFromProjectController:", error);
     res.status(error.statusCode || 500).json({
       success: false,
       message: error.reason || "Internal Server Error",
     });
   }
 }
-
 
 export async function getAllProjectsController(req, res) {
   try {
@@ -89,7 +119,9 @@ export async function updateProjectController(req, res) {
     const { id } = req.params;
     const updateData = req.body;
     const updated = await updateProjectService(id, updateData);
-    res.status(200).json({ success: true, message: "Project updated", project: updated });
+    res
+      .status(200)
+      .json({ success: true, message: "Project updated", project: updated });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -41,7 +41,7 @@ export async function updateTaskInProjectController(req, res) {
       data: updatedTask,
     });
   } catch (error) {
-    console.error("❌ Error in updateTaskInProjectController:", error);
+    console.error("Error in updateTaskInProjectController:", error);
     res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Internal server error",
@@ -118,7 +118,7 @@ export async function deleteTaskInProjectController(req, res) {
       data: deletedTask,
     });
   } catch (error) {
-    console.error("❌ Error in Delete Task Controller:", error.message);
+    console.error("Error in Delete Task Controller:", error.message);
     res.status(400).json({
       success: false,
       message: new InternalServerError().message

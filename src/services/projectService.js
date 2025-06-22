@@ -37,7 +37,6 @@ export async function createProjectService(userId, name, description) {
 export async function getProjectByIdService(projectId) {
   try {
     const project = await getProjectById(projectId);
-    console.log(project);
     if (!project) throw new Error("Project not found");
     return project;
   } catch (error) {

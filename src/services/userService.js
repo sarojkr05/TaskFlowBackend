@@ -6,7 +6,6 @@ dotenv.config();
 // Register User
 async function registerUser(userDetails) {
   try {
-    console.log("Received user details:", userDetails);
 
     const existingUser = await User.findOne({ email: userDetails.email });
     if (existingUser) {
@@ -30,7 +29,7 @@ async function registerUser(userDetails) {
 
     return { user: newUser, token };
   } catch (error) {
-    console.error("❌ Error in registerUser:", error);
+    console.error("Error in registerUser:", error);
     throw error;
   }
 }
@@ -57,7 +56,7 @@ async function loginUser({ email, password }) {
     });
     return { user, token };
   } catch (error) {
-    console.error("❌ Error in loginUser:", error);
+    console.error("Error in loginUser:", error);
     throw error;
   }
 }

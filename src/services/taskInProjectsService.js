@@ -52,12 +52,11 @@ export async function createTaskInProjectService(
       project: projectId,
     });
 
-    console.log("📦 assignedTo:", assignedTo);
-console.log("📦 onlineUsers map:", onlineUsers);
+    console.log("assignedTo:", assignedTo);
+console.log("onlineUsers map:", onlineUsers);
 
     const socketId = onlineUsers.get(assignedTo.toString());
     if (socketId) {
-      console.log("📤 Found socket ID:", socketId);
       io.to(socketId).emit("projectAdded", {
         message: message,
         project: projectId,

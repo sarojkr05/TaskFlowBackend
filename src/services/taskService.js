@@ -46,7 +46,6 @@ export const updateTaskService = async (taskId, userId, updatedData, userRole) =
   try {
     // Find the task first
     const task = await updateTask(taskId, updatedData);
-    console.log("task from service", task)
 
     if (!task) {
       throw { reason: "Task not found", statusCode: 404 };

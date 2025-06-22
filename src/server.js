@@ -21,7 +21,7 @@ const server = http.createServer(app);
 // Setup socket.io
 export const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173" || "https://taskflowa.netlify.app", // frontend origin
+    origin: "https://taskflowa.netlify.app", // frontend origin
     credentials: true,
   },
 });
@@ -52,7 +52,7 @@ app.use(cookieParser())
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: "https://taskflowa.netlify.app",
     credentials: true
 }))
 

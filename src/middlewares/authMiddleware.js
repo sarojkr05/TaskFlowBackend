@@ -7,14 +7,13 @@ dotenv.config();
 // Middleware to authenticate user using JWT
 export const authenticate = async (req, res, next) => {
   try {
-    // Get token from cookie or Authorization header
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({ message: "No token, authorization denied" });
     }
 
-    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id).select("-password");
 
@@ -24,10 +23,10 @@ export const authenticate = async (req, res, next) => {
 
     next();
   } catch (error) {
+    console.error("JWT error:", error);
     res.status(401).json({ message: "Invalid token" });
   }
 };
-
 
 // Middleware to check user role
 export const authorizeRoles = (...roles) => {

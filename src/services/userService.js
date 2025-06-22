@@ -6,7 +6,7 @@ dotenv.config();
 // Register User
 async function registerUser(userDetails) {
   try {
-
+    console.log("Register payload", userDetails)
     const existingUser = await User.findOne({ email: userDetails.email });
     if (existingUser) {
       throw { reason: "User already exists", statusCode: 400 };

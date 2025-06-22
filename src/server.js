@@ -21,7 +21,7 @@ const server = http.createServer(app);
 // Setup socket.io
 export const io = new Server(server, {
   cors: {
-    origin: "https://taskflowa.netlify.app", // frontend origin
+    origin: "https://task-flow-frontend-murex.vercel.app", // frontend origin
     credentials: true,
   },
 });
@@ -52,7 +52,7 @@ app.use(cookieParser())
 
 
 app.use(cors({
-    origin: "https://taskflowa.netlify.app",
+    origin: "https://task-flow-frontend-murex.vercel.app",
     credentials: true
 }))
 
